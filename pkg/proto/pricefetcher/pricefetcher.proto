@@ -1,0 +1,54 @@
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative *.proto
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = ".;pricefetcher";
+package pricefetcher;
+
+service PriceFetcher {
+  rpc Fetch (FetchRequest) returns (FetchResponse) {
+  }
+
+  rpc List (ListRequest) returns (ListResponse) {
+  }
+}
+
+message FetchRequest {
+  string URL = 1;
+}
+
+message FetchResponse {
+}
+
+message ListRequest {
+  Paging paging = 1;
+  Sorting sorting = 2;
+
+  message Paging {
+    int32 offset = 1;
+    int32 limit = 2;
+  }
+
+  message Sorting {
+    int32 fieldNumber = 1;
+    bool asc = 2;
+  }
+}
+
+message ListResponse {
+  PagingInfo pagingInfo = 1;
+  repeated ProductPrice productsPrices = 2;
+
+  message PagingInfo {
+    int32 offset = 1;
+    int32 totalRecords = 2;
+  }
+
+  message ProductPrice {
+    string productName = 1;
+    double price = 2;
+    int32 priceChangeCount = 3;
+    google.protobuf.Timestamp lastPriceChangeDate = 4;
+  }
+}
